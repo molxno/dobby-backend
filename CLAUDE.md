@@ -95,7 +95,7 @@ hotfix/urgente    ──PR──▶  main + dev
 ## Conventional Commits
 
 ```
-<type>(<scope>): <descripción en español>
+<type>(<scope>): <description in English>
 ```
 
 ### Types
@@ -104,13 +104,13 @@ hotfix/urgente    ──PR──▶  main + dev
 ### Scopes
 `schema`, `rls`, `migration`, `function`, `trigger`, `seed`, `auth`, `deps`, `ci`
 
-### Ejemplos
+### Examples
 ```
-feat(schema): agregar tabla de categorías personalizadas
-fix(rls): corregir policy de delete en transactions
-test(function): agregar tests para delete_user_account
-chore(deps): actualizar Supabase CLI a v1.210
-ci: configurar GitHub Actions para tests
+feat(schema): add custom categories table
+fix(rls): fix delete policy on transactions
+test(function): add tests for delete_user_account
+chore(deps): update Supabase CLI to v1.210
+ci: set up GitHub Actions for tests
 ```
 
 ## Arquitectura de Base de Datos
@@ -181,7 +181,7 @@ Ejemplo: `current_balance` (DB) ↔ `currentBalance` (frontend)
 4. **SECURITY DEFINER con cuidado** — Solo en functions que lo necesiten, siempre con `SET search_path`
 5. **snake_case siempre** — Tablas, columnas, functions, triggers
 6. **Validaciones en DB** — CHECK constraints para enums y rangos, no depender solo del frontend
-7. **Idioma español** — UI, mensajes, documentación, seed data, comentarios en SQL
+7. **English only** — All code, commits, comments, documentation, branch names, and PR descriptions must be in English. No Spanish.
 
 ## Slash Commands
 
