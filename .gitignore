@@ -1,22 +1,98 @@
-# Entorno
+# =============================================================
+# Variables de entorno y secretos
+# =============================================================
 .env
+.env.*
 .env.local
 .env.*.local
+!.env.example
 
+# =============================================================
 # Supabase
+# =============================================================
 supabase/.temp/
 supabase/.branches/
 .supabase/
+supabase/.env
+supabase/functions/.env
+supabase/functions/.env.local
 
+# Supabase Edge Functions vendor (generado)
+supabase/functions/**/node_modules/
+
+# Signing keys (NUNCA commitear)
+supabase/signing_keys.json
+signing_keys.json
+
+# =============================================================
 # Node
+# =============================================================
 node_modules/
+package-lock.json
+npm-debug.log*
 
-# Logs
-*.log
+# =============================================================
+# Deno
+# =============================================================
+deno.lock
 
-# Tipos generados
+# =============================================================
+# Tipos generados (se regeneran con npm run types)
+# =============================================================
 src/database.types.ts
 
+# =============================================================
+# Logs
+# =============================================================
+*.log
+logs/
+
+# =============================================================
 # OS
+# =============================================================
 .DS_Store
+.DS_Store?
+._*
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# =============================================================
+# IDEs
+# =============================================================
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# =============================================================
+# Credenciales y keys
+# =============================================================
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+credentials.json
+service_account.json
+google-credentials.json
+firebase-credentials.json
+
+# =============================================================
+# Docker (archivos locales)
+# =============================================================
+docker-compose.override.yml
+
+# =============================================================
+# Backups y temporales
+# =============================================================
+*.sql.bak
+*.dump
+*.backup
+tmp/
+temp/

@@ -13,7 +13,7 @@ Gracias por tu interés en contribuir a **dobby-backend**. Este documento explic
 3. **Configura** el entorno:
    ```bash
    git config core.hooksPath .githooks
-   git remote add upstream https://github.com/smola/dobby-backend.git
+   git remote add upstream https://github.com/molxno/dobby-backend.git
    ```
 4. **Levanta** Supabase local:
    ```bash
@@ -135,7 +135,7 @@ test(function): agregar tests para delete_user_account
 
 ## Reporte de bugs
 
-Usa el template de [Bug Report](https://github.com/smola/dobby-backend/issues/new?template=bug_report.yml) para reportar bugs. Incluye:
+Usa el template de [Bug Report](https://github.com/molxno/dobby-backend/issues/new?template=bug_report.yml) para reportar bugs. Incluye:
 
 - Qué tabla/function/policy está involucrada
 - Query o operación que falla
@@ -148,4 +148,4 @@ Se espera que todos los participantes sean respetuosos y constructivos. No se to
 
 ## Preguntas
 
-Si tienes dudas, abre un [Discussion](https://github.com/smola/dobby-backend/discussions) o un issue con la etiqueta `question`.
+Si tienes dudas, abre un [Discussion](https://github.com/molxno/dobby-backend/discussions) o un issue con la etiqueta `question`.

@@ -16,7 +16,7 @@
 
 ## Sobre el proyecto
 
-**dobby-backend** es el backend de [dobby-frontend](https://github.com/smola/dobby-frontend), una aplicación de finanzas personales que ayuda a los usuarios a gestionar ingresos, gastos, deudas y metas de ahorro.
+**dobby-backend** es el backend de [dobby-frontend](https://github.com/molxno/dobby-frontend), una aplicación de finanzas personales que ayuda a los usuarios a gestionar ingresos, gastos, deudas y metas de ahorro.
 
 El frontend es una SPA React que sincroniza todo su estado con Supabase vía `supabase-js`. No hay REST API custom — el frontend hace queries directos a las tablas, protegido por **Row Level Security (RLS)**.
 
@@ -88,7 +88,7 @@ Todas las tablas tienen **RLS habilitado**. Cada usuario solo puede leer y modif
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/smola/dobby-backend.git
+git clone https://github.com/molxno/dobby-backend.git
 cd dobby-backend
 
 # 2. Configurar git hooks
