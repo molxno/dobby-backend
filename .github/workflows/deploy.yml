@@ -1,4 +1,4 @@
-name: CD — Deploy a Producción
+name: CD — Deploy to Production
 
 on:
   push:
@@ -12,14 +12,14 @@ env:
   SUPABASE_CLI_VERSION: "2.75.0"
 
 jobs:
-  # ─── Gate: CI debe pasar primero ────────────────────────────────
+  # ─── Gate: CI must pass first ──────────────────────────────────
   ci:
-    name: Validación CI
+    name: CI Validation
     uses: ./.github/workflows/ci.yml
 
-  # ─── Deploy migraciones a producción ────────────────────────────
+  # ─── Deploy migrations to production ───────────────────────────
   deploy-migrations:
-    name: Deploy Migraciones
+    name: Deploy Migrations
     runs-on: ubuntu-latest
     needs: [ci]
     environment: production
@@ -34,16 +34,16 @@ jobs:
         with:
           version: ${{ env.SUPABASE_CLI_VERSION }}
 
-      - name: Link al proyecto de producción
+      - name: Link to production project
         run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
 
-      - name: Aplicar migraciones pendientes
+      - name: Apply pending migrations
         run: supabase db push
 
-      - name: Verificar estado de migraciones
+      - name: Verify migration status
         run: supabase migration list
 
-  # ─── Deploy Edge Functions ──────────────────────────────────────
+  # ─── Deploy Edge Functions ─────────────────────────────────────
   deploy-functions:
     name: Deploy Edge Functions
     runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
         with:
           version: ${{ env.SUPABASE_CLI_VERSION }}
 
-      - name: Link al proyecto de producción
+      - name: Link to production project
         run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
 
       - name: Deploy Edge Functions
@@ -69,42 +69,42 @@ jobs:
 
           if [ "$FUNCTION_COUNT" -gt 0 ]; then
             supabase functions deploy
-            echo "✅ $FUNCTION_COUNT función(es) desplegada(s)"
+            echo "✅ $FUNCTION_COUNT function(s) deployed"
           else
-            echo "⏭️ No hay Edge Functions para desplegar — skipping"
+            echo "⏭️ No Edge Functions to deploy — skipping"
           fi
 
-  # ─── Notificación de deploy ─────────────────────────────────────
+  # ─── Deploy notification ───────────────────────────────────────
   notify:
-    name: Resumen del Deploy
+    name: Deploy Summary
     runs-on: ubuntu-latest
     needs: [deploy-migrations, deploy-functions]
     if: always()
     steps:
-      - name: Resumen
+      - name: Summary
         run: |
-          echo "## Deploy a Producción" >> $GITHUB_STEP_SUMMARY
+          echo "## Deploy to Production" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Componente | Estado |" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
 
           if [ "${{ needs.deploy-migrations.result }}" == "success" ]; then
-            echo "| Migraciones | Exitoso |" >> $GITHUB_STEP_SUMMARY
+            echo "| Migrations | Success |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Migraciones | Falló |" >> $GITHUB_STEP_SUMMARY
+            echo "| Migrations | Failed |" >> $GITHUB_STEP_SUMMARY
           fi
 
           if [ "${{ needs.deploy-functions.result }}" == "success" ]; then
-            echo "| Edge Functions | Exitoso |" >> $GITHUB_STEP_SUMMARY
+            echo "| Edge Functions | Success |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Edge Functions | Falló |" >> $GITHUB_STEP_SUMMARY
+            echo "| Edge Functions | Failed |" >> $GITHUB_STEP_SUMMARY
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Autor:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
 
           if [ "${{ needs.deploy-migrations.result }}" != "success" ] || [ "${{ needs.deploy-functions.result }}" != "success" ]; then
-            echo "Deploy falló — revisa los logs arriba"
+            echo "Deploy failed — check the logs above"
             exit 1
           fi
