@@ -1,0 +1,188 @@
+name: CI — Validación y Tests
+
+on:
+  workflow_call:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SUPABASE_CLI_VERSION: "2.75.0"
+
+jobs:
+  # ─── Validar Conventional Commits ───────────────────────────────
+  commit-lint:
+    name: Validar Conventional Commits
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validar mensajes de commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          PATTERN='^(feat|fix|refactor|perf|docs|test|chore|ci)(\((schema|rls|migration|function|trigger|seed|auth|deps|ci)\))?: .{1,100}$'
+          MERGE_PATTERN='^Merge '
+
+          # Obtener solo el subject (primera línea) de cada commit del PR
+          SUBJECTS=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits \
+            --jq '.[].commit.message | split("\n")[0]')
+
+          ERRORS=0
+          while IFS= read -r SUBJECT; do
+            [ -z "$SUBJECT" ] && continue
+            if [[ "$SUBJECT" =~ $MERGE_PATTERN ]]; then
+              continue
+            fi
+            if ! [[ "$SUBJECT" =~ $PATTERN ]]; then
+              echo "❌ Commit inválido: $SUBJECT"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done <<< "$SUBJECTS"
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "📝 Formato requerido: <type>(<scope>): <descripción>"
+            echo "   Types: feat, fix, refactor, perf, docs, test, chore, ci"
+            echo "   Scopes: schema, rls, migration, function, trigger, seed, auth, deps, ci"
+            exit 1
+          fi
+          echo "✅ Todos los commits siguen Conventional Commits"
+
+  # ─── Lint y formato de Edge Functions (Deno) ────────────────────
+  deno-check:
+    name: Lint y Formato Deno
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Verificar formato y lint
+        run: |
+          # Buscar archivos TypeScript/JavaScript en directorios de functions
+          FILES=$(find supabase/functions/ tests/functions/ -name '*.ts' -o -name '*.js' 2>/dev/null || true)
+
+          if [ -z "$FILES" ]; then
+            echo "⏭️ No hay archivos Deno para verificar — skipping"
+            exit 0
+          fi
+
+          echo "📝 Verificando formato..."
+          deno fmt --check supabase/functions/ tests/functions/
+
+          echo "🔍 Ejecutando lint..."
+          deno lint supabase/functions/ tests/functions/
+
+  # ─── Tests de base de datos (pgTAP) ────────────────────────────
+  database-tests:
+    name: Tests pgTAP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+
+      - name: Iniciar Supabase local
+        run: supabase start -x realtime,storage-api,imgproxy,mailpit,postgrest,gotrue,studio,edge-runtime,logflare,vector,supavisor
+
+      - name: Lint del schema SQL
+        run: supabase db lint
+
+      - name: Ejecutar tests de base de datos
+        run: supabase test db
+
+      - name: Detener Supabase
+        if: always()
+        run: supabase stop --no-backup
+
+  # ─── Tests de Edge Functions (Deno) ─────────────────────────────
+  function-tests:
+    name: Tests Edge Functions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Ejecutar tests de Edge Functions
+        run: |
+          if [ -n "$(find tests/functions -name '*.test.ts' -o -name '*.test.js' 2>/dev/null)" ]; then
+            deno test tests/functions/ --allow-all
+          else
+            echo "⏭️ No hay tests de Edge Functions todavía — skipping"
+          fi
+
+  # ─── Validar migraciones (no destructivas) ─────────────────────
+  migration-check:
+    name: Validar Migraciones
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar migraciones no destructivas
+        run: |
+          ERRORS=0
+          for file in supabase/migrations/*.sql; do
+            [ -f "$file" ] || continue
+            # Saltar si la migración está marcada explícitamente como destructiva
+            if grep -qi -- '--[[:space:]]*DESTRUCTIVE:' "$file"; then
+              echo "⏭️ Saltando $file (marcada como DESTRUCTIVE)"
+              continue
+            fi
+            if grep -qiE '(DROP[[:space:]]+TABLE|ALTER[[:space:]]+TABLE[[:space:]]+.*DROP[[:space:]]+COLUMN|TRUNCATE)' "$file"; then
+              echo "⚠️  Operación destructiva detectada en: $file"
+              grep -niE '(DROP[[:space:]]+TABLE|ALTER[[:space:]]+TABLE[[:space:]]+.*DROP[[:space:]]+COLUMN|TRUNCATE)' "$file"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "❌ Se detectaron operaciones destructivas. Revisa las migraciones."
+            echo "   Si es intencional, agrega un comentario: -- DESTRUCTIVE: <razón>"
+            exit 1
+          fi
+          echo "✅ No se detectaron operaciones destructivas"
+
+      - name: Verificar RLS en tablas nuevas
+        run: |
+          ERRORS=0
+          for file in supabase/migrations/*.sql; do
+            [ -f "$file" ] || continue
+            # Extraer nombres de tablas creadas (case-insensitive)
+            TABLES=$(grep -oiP '(?<=CREATE[[:space:]]{1,5}TABLE[[:space:]]{1,5})(IF[[:space:]]+NOT[[:space:]]+EXISTS[[:space:]]+)?(public\.)?[a-z_]+' "$file" 2>/dev/null \
+              | sed -E 's/^(IF[[:space:]]+NOT[[:space:]]+EXISTS[[:space:]]+)?(public\.)?//' || true)
+            for TABLE in $TABLES; do
+              [ -z "$TABLE" ] && continue
+              if ! grep -qiE "ALTER[[:space:]]+TABLE[[:space:]]+(public[.])?${TABLE}[[:space:]]+ENABLE[[:space:]]+ROW[[:space:]]+LEVEL[[:space:]]+SECURITY" "$file"; then
+                echo "❌ Tabla '$TABLE' creada sin RLS en: $file"
+                ERRORS=$((ERRORS + 1))
+              fi
+            done
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "❌ Todas las tablas DEBEN tener RLS habilitado."
+            exit 1
+          fi
+          echo "✅ Todas las tablas nuevas tienen RLS habilitado"
