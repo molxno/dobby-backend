@@ -2,7 +2,7 @@
 -- Tests de Schema — Verificar que todas las tablas y columnas existen
 -- =============================================================
 begin;
-select plan(43);
+select plan(45);
 
 -- =====================
 -- Verificar que las tablas existen
