@@ -1,0 +1,82 @@
+name: "Feature Request"
+description: "Proponer una nueva funcionalidad para el backend"
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por proponer una mejora. Describe tu idea con el mayor detalle posible.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: "Área"
+      description: "Selecciona el área de la funcionalidad"
+      options:
+        - Nueva tabla
+        - Modificación de schema existente
+        - Nueva RLS policy
+        - Nuevo trigger / function
+        - Nueva Edge Function
+        - Mejora de performance (indexes, queries)
+        - Auth / Seguridad
+        - Otro
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Descripción"
+      description: "Describe la funcionalidad que propones"
+      placeholder: |
+        Agregar una tabla `categories` para que los usuarios puedan crear categorías personalizadas de gastos, en vez de usar solo las predefinidas.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: "Motivación"
+      description: "Por qué necesitamos esta funcionalidad? Qué problema resuelve?"
+      placeholder: |
+        Actualmente las categorías de gastos son fijas en el frontend. Los usuarios han pedido poder crear sus propias categorías para adaptarse a su estilo de vida.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_schema
+    attributes:
+      label: "Schema propuesto (opcional)"
+      description: "Si tienes una idea del schema SQL, compártela"
+      render: sql
+      placeholder: |
+        CREATE TABLE categories (
+          id text PRIMARY KEY,
+          user_id uuid REFERENCES profiles ON DELETE CASCADE NOT NULL,
+          name text NOT NULL,
+          icon text DEFAULT '',
+          color text DEFAULT '#666',
+          created_at timestamptz DEFAULT now()
+        );
+    validations:
+      required: false
+
+  - type: textarea
+    id: considerations
+    attributes:
+      label: "Consideraciones"
+      description: "Algo que debamos tener en cuenta? (RLS, migraciones, compatibilidad con frontend, etc.)"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "He revisado que no existe un issue similar abierto"
+          required: true
+        - label: "Estoy dispuesto/a a contribuir con un PR para esta funcionalidad"
+          required: false

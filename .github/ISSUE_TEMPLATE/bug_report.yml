@@ -1,0 +1,82 @@
+name: "Bug Report"
+description: "Reportar un bug en la base de datos, RLS, triggers o Edge Functions"
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar este bug. Completa la información para que podamos investigar.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: "Área afectada"
+      description: "Selecciona el área donde ocurre el bug"
+      options:
+        - Schema (tablas, columnas, tipos)
+        - RLS (policies de seguridad)
+        - Triggers / Functions
+        - Edge Functions
+        - Auth (autenticación)
+        - Migraciones
+        - Seed data
+        - Otro
+    validations:
+      required: true
+
+  - type: input
+    id: table
+    attributes:
+      label: "Tabla/función afectada"
+      description: "Nombre de la tabla, function o trigger involucrado"
+      placeholder: "ej: profiles, delete_user_account(), incomes_updated_at"
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Descripción del bug"
+      description: "Describe qué está pasando y qué esperabas que pasara"
+      placeholder: |
+        **Qué pasa:** Al intentar insertar un gasto con payment_method='nequi', no hay error pero tampoco se guarda.
+        **Qué espero:** Debería rechazar el valor con un CHECK constraint error.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: "Pasos para reproducir"
+      description: "Query SQL o pasos para reproducir el bug"
+      placeholder: |
+        1. Levantar Supabase local: `npm run dev`
+        2. Ejecutar en SQL Editor:
+        ```sql
+        INSERT INTO expenses (id, user_id, name, payment_method)
+        VALUES ('test', 'uuid-aqui', 'Test', 'nequi');
+        ```
+        3. Ver el resultado
+    validations:
+      required: true
+
+  - type: textarea
+    id: error
+    attributes:
+      label: "Error o resultado actual"
+      description: "Copia el error exacto o describe el resultado"
+      render: shell
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "Entorno"
+      options:
+        - Local (supabase start)
+        - Producción (Supabase hosted)
+        - Ambos
+    validations:
+      required: true
