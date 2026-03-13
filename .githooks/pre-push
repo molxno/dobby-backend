@@ -1,0 +1,23 @@
+#!/bin/bash
+# =============================================================
+# Pre-push hook para dobby-backend
+# =============================================================
+# Bloquea push directo a main. Usa PR desde dev o hotfix/*.
+# =============================================================
+
+protected_branch="main"
+current_branch=$(git symbolic-ref HEAD 2>/dev/null | sed 's|refs/heads/||')
+
+if [ "$current_branch" = "$protected_branch" ]; then
+  echo ""
+  echo "🚫 Push directo a '$protected_branch' no permitido."
+  echo ""
+  echo "Flujo correcto:"
+  echo "  feat/mi-feature  ──PR──▶  dev  ──PR──▶  main"
+  echo "  fix/mi-fix        ──PR──▶  dev  ──PR──▶  main"
+  echo "  hotfix/urgente    ──PR──▶  main + dev"
+  echo ""
+  echo "Si es un hotfix urgente, usa una rama hotfix/*"
+  echo ""
+  exit 1
+fi

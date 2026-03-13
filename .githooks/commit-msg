@@ -1,0 +1,40 @@
+#!/bin/bash
+# =============================================================
+# Validación de Conventional Commits para dobby-backend
+# =============================================================
+# Tipos: feat, fix, refactor, perf, docs, test, chore, ci
+# Scopes: schema, rls, migration, function, trigger, seed, auth, deps, ci
+# =============================================================
+
+commit_msg_file="$1"
+commit_msg=$(cat "$commit_msg_file")
+
+# Regex para Conventional Commits
+pattern="^(feat|fix|refactor|perf|docs|test|chore|ci)(\((schema|rls|migration|function|trigger|seed|auth|deps|ci)\))?: .{1,100}$"
+
+# Permitir merge commits
+if echo "$commit_msg" | grep -qE "^Merge "; then
+  exit 0
+fi
+
+# Validar primera línea
+first_line=$(echo "$commit_msg" | head -n 1)
+
+if ! echo "$first_line" | grep -qE "$pattern"; then
+  echo ""
+  echo "❌ Commit message inválido."
+  echo ""
+  echo "Formato esperado: <type>(<scope>): <descripción>"
+  echo ""
+  echo "  Tipos:  feat, fix, refactor, perf, docs, test, chore, ci"
+  echo "  Scopes: schema, rls, migration, function, trigger, seed, auth, deps, ci"
+  echo ""
+  echo "  Ejemplos:"
+  echo "    feat(schema): agregar tabla de categorías personalizadas"
+  echo "    fix(rls): corregir policy de delete en transactions"
+  echo "    test(function): agregar tests para delete_user_account"
+  echo ""
+  echo "  Tu mensaje: $first_line"
+  echo ""
+  exit 1
+fi

@@ -1,0 +1,67 @@
+#!/bin/bash
+# =============================================================
+# Pre-commit hook para dobby-backend
+# =============================================================
+# 1. Lint básico de archivos SQL modificados
+# 2. Verificar nombres descriptivos en migraciones nuevas
+# 3. Si hay Edge Functions modificadas, correr sus tests
+# =============================================================
+
+echo "🔍 Ejecutando pre-commit checks..."
+
+# Obtener archivos staged
+staged_files=$(git diff --cached --name-only --diff-filter=ACM)
+
+# --- 1. Lint básico de SQL ---
+sql_files=$(echo "$staged_files" | grep '\.sql$' || true)
+if [ -n "$sql_files" ]; then
+  echo "📄 Verificando archivos SQL..."
+  for file in $sql_files; do
+    # Verificar que no haya DROP TABLE/COLUMN sin comentario explicativo
+    if grep -qiE "DROP (TABLE|COLUMN)" "$file"; then
+      echo "⚠️  $file contiene DROP TABLE/COLUMN — asegúrate de que es intencional"
+    fi
+    # Verificar que nuevas tablas tengan RLS
+    if grep -qiE "CREATE TABLE" "$file" && ! grep -qiE "ENABLE ROW LEVEL SECURITY" "$file"; then
+      echo "❌ $file crea tabla(s) sin habilitar RLS"
+      echo "   Agrega: ALTER TABLE <tabla> ENABLE ROW LEVEL SECURITY;"
+      exit 1
+    fi
+  done
+  echo "✅ SQL checks pasados"
+fi
+
+# --- 2. Verificar nombres de migraciones ---
+migration_files=$(echo "$staged_files" | grep 'supabase/migrations/' || true)
+if [ -n "$migration_files" ]; then
+  echo "📄 Verificando migraciones..."
+  for file in $migration_files; do
+    basename=$(basename "$file")
+    # Verificar que tenga nombre descriptivo (no solo timestamp)
+    name_part=$(echo "$basename" | sed 's/^[0-9]*_//' | sed 's/\.sql$//')
+    if [ -z "$name_part" ] || [ "$name_part" = "migration" ]; then
+      echo "❌ Migración sin nombre descriptivo: $basename"
+      echo "   Usa: supabase migration new <nombre_descriptivo>"
+      exit 1
+    fi
+  done
+  echo "✅ Migraciones con nombres descriptivos"
+fi
+
+# --- 3. Tests de Edge Functions modificadas ---
+function_files=$(echo "$staged_files" | grep 'supabase/functions/' || true)
+if [ -n "$function_files" ]; then
+  echo "🧪 Edge Functions modificadas, ejecutando tests..."
+  if command -v deno &> /dev/null && [ -d "tests/functions" ]; then
+    deno test tests/functions/ --allow-all
+    if [ $? -ne 0 ]; then
+      echo "❌ Tests de Edge Functions fallaron"
+      exit 1
+    fi
+    echo "✅ Tests de Edge Functions pasados"
+  else
+    echo "⚠️  Deno no disponible o no hay tests — saltando"
+  fi
+fi
+
+echo "✅ Pre-commit checks completados"

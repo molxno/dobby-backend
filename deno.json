@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.window"]
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "singleQuote": true
+  },
+  "test": {
+    "include": ["tests/functions/"]
+  },
+  "imports": {
+    "supabase": "https://esm.sh/@supabase/supabase-js@2",
+    "std/": "https://deno.land/std@0.220.0/"
+  }
+}

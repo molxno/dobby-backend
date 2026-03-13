@@ -1,0 +1,22 @@
+# Entorno
+.env
+.env.local
+.env.*.local
+
+# Supabase
+supabase/.temp/
+supabase/.branches/
+.supabase/
+
+# Node
+node_modules/
+
+# Logs
+*.log
+
+# Tipos generados
+src/database.types.ts
+
+# OS
+.DS_Store
+Thumbs.db
