@@ -3,9 +3,9 @@
 
 -- Crear la columna si no existe aún (sin PL/pgSQL)
 ALTER TABLE public.profiles
-  ADD COLUMN IF NOT EXISTS biweekly_checked_items jsonb;
+  ADD COLUMN IF NOT EXISTS biweekly_checked_items jsonb NOT NULL DEFAULT '{}'::jsonb;
 
--- Backfill: garantizar que no haya valores NULL
+-- Backfill: garantizar que no haya valores NULL (para instalaciones antiguas donde la columna ya exista y permita NULL)
 UPDATE public.profiles
 SET biweekly_checked_items = '{}'::jsonb
 WHERE biweekly_checked_items IS NULL;
