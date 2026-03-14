@@ -169,8 +169,8 @@ jobs:
           for file in supabase/migrations/*.sql; do
             [ -f "$file" ] || continue
             # Extract created table names (case-insensitive)
-            TABLES=$(grep -oiP '(?<=CREATE[[:space:]]{1,5}TABLE[[:space:]]{1,5})(IF[[:space:]]+NOT[[:space:]]+EXISTS[[:space:]]+)?(public\.)?[a-z_]+' "$file" 2>/dev/null \
-              | sed -E 's/^(IF[[:space:]]+NOT[[:space:]]+EXISTS[[:space:]]+)?(public\.)?//' || true)
+            TABLES=$(grep -oiP 'CREATE\s+TABLE\s+(IF\s+NOT\s+EXISTS\s+)?(public\.)?[a-z_]+' "$file" 2>/dev/null \
+              | sed -E 's/^CREATE[[:space:]]+TABLE[[:space:]]+(IF[[:space:]]+NOT[[:space:]]+EXISTS[[:space:]]+)?(public\.)?//i' || true)
             for TABLE in $TABLES; do
               [ -z "$TABLE" ] && continue
               if ! grep -qiE "ALTER[[:space:]]+TABLE[[:space:]]+(public[.])?${TABLE}[[:space:]]+ENABLE[[:space:]]+ROW[[:space:]]+LEVEL[[:space:]]+SECURITY" "$file"; then

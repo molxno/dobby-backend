@@ -6,7 +6,9 @@ on:
 
 concurrency:
   group: deploy-production
-  cancel-in-progress: true
+  # Do NOT cancel in-progress deploys — cancelling a running `supabase db push`
+  # could leave the database in a partially-migrated state.
+  cancel-in-progress: false
 
 env:
   SUPABASE_CLI_VERSION: "2.75.0"
