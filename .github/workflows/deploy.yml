@@ -43,11 +43,11 @@ jobs:
       - name: Verify migration status
         run: supabase migration list
 
-  # ─── Deploy Edge Functions ─────────────────────────────────────
+  # ─── Deploy Edge Functions (runs AFTER migrations to ensure schema is up to date) ───
   deploy-functions:
     name: Deploy Edge Functions
     runs-on: ubuntu-latest
-    needs: [ci, deploy-migrations]
+    needs: [ci, deploy-migrations]  # Sequential: migrations must complete before functions
     environment: production
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
