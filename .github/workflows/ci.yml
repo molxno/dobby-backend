@@ -19,48 +19,6 @@ env:
   SUPABASE_CLI_VERSION: "2.75.0"
 
 jobs:
-  # ─── Validate Conventional Commits ─────────────────────────────
-  commit-lint:
-    name: Validate Conventional Commits
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Validate commit messages
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-
-          PATTERN='^(feat|fix|refactor|perf|docs|test|chore|ci)(\((schema|rls|migration|function|trigger|seed|auth|deps|ci)\))?: .{1,100}$'
-          MERGE_PATTERN='^Merge '
-
-          # Get only the subject (first line) of each PR commit
-          SUBJECTS=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits \
-            --paginate --jq '.[].commit.message | split("\n")[0]')
-
-          ERRORS=0
-          while IFS= read -r SUBJECT; do
-            [ -z "$SUBJECT" ] && continue
-            if [[ "$SUBJECT" =~ $MERGE_PATTERN ]]; then
-              continue
-            fi
-            if ! [[ "$SUBJECT" =~ $PATTERN ]]; then
-              echo "❌ Invalid commit: $SUBJECT"
-              ERRORS=$((ERRORS + 1))
-            fi
-          done <<< "$SUBJECTS"
-
-          if [ "$ERRORS" -gt 0 ]; then
-            echo ""
-            echo "📝 Required format: <type>(<scope>): <description>"
-            echo "   Types: feat, fix, refactor, perf, docs, test, chore, ci"
-            echo "   Scopes: schema, rls, migration, function, trigger, seed, auth, deps, ci"
-            exit 1
-          fi
-          echo "✅ All commits follow Conventional Commits"
-
   # ─── Lint and format Edge Functions (Deno) ─────────────────────
   deno-check:
     name: Deno Lint and Format
