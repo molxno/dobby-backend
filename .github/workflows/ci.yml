@@ -1,0 +1,146 @@
+name: CI — Validation and Tests
+
+on:
+  workflow_call:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SUPABASE_CLI_VERSION: "2.75.0"
+
+jobs:
+  # ─── Lint and format Edge Functions (Deno) ─────────────────────
+  deno-check:
+    name: Deno Lint and Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Check format and lint
+        run: |
+          # Find TypeScript/JavaScript files in functions directories
+          FILES=$(find supabase/functions/ tests/functions/ -name '*.ts' -o -name '*.js' 2>/dev/null || true)
+
+          if [ -z "$FILES" ]; then
+            echo "⏭️ No Deno files to check — skipping"
+            exit 0
+          fi
+
+          echo "📝 Checking format..."
+          deno fmt --check supabase/functions/ tests/functions/
+
+          echo "🔍 Running lint..."
+          deno lint supabase/functions/ tests/functions/
+
+  # ─── Database tests (pgTAP) ───────────────────────────────────
+  database-tests:
+    name: pgTAP Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+
+      - name: Start local Supabase
+        run: supabase start -x realtime,storage-api,imgproxy,mailpit,postgrest,gotrue,studio,edge-runtime,logflare,vector,supavisor
+
+      - name: SQL schema lint
+        run: supabase db lint
+
+      - name: Run database tests
+        run: supabase test db
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop --no-backup
+
+  # ─── Edge Functions tests (Deno) ──────────────────────────────
+  function-tests:
+    name: Edge Functions Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Run Edge Functions tests
+        run: |
+          if [ -n "$(find tests/functions -name '*.test.ts' -o -name '*.test.js' 2>/dev/null)" ]; then
+            deno test tests/functions/ --allow-all
+          else
+            echo "⏭️ No Edge Functions tests yet — skipping"
+          fi
+
+  # ─── Validate migrations (non-destructive) ────────────────────
+  migration-check:
+    name: Validate Migrations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for destructive migrations
+        run: |
+          ERRORS=0
+          for file in supabase/migrations/*.sql; do
+            [ -f "$file" ] || continue
+            # Skip if migration is explicitly marked as destructive
+            if grep -qi -- '--[[:space:]]*DESTRUCTIVE:' "$file"; then
+              echo "⏭️ Skipping $file (marked as DESTRUCTIVE)"
+              continue
+            fi
+            if grep -qiE '(DROP[[:space:]]+TABLE|ALTER[[:space:]]+TABLE[[:space:]]+.*DROP[[:space:]]+COLUMN|TRUNCATE)' "$file"; then
+              echo "⚠️  Destructive operation detected in: $file"
+              grep -niE '(DROP[[:space:]]+TABLE|ALTER[[:space:]]+TABLE[[:space:]]+.*DROP[[:space:]]+COLUMN|TRUNCATE)' "$file"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "❌ Destructive operations detected. Review the migrations."
+            echo "   If intentional, add a comment: -- DESTRUCTIVE: <reason>"
+            exit 1
+          fi
+          echo "✅ No destructive operations detected"
+
+      - name: Check RLS on new tables
+        run: |
+          ERRORS=0
+          for file in supabase/migrations/*.sql; do
+            [ -f "$file" ] || continue
+            # Extract created table names (case-insensitive)
+            TABLES=$(grep -oiP 'CREATE\s+TABLE\s+(IF\s+NOT\s+EXISTS\s+)?(public\.)?[a-z_]+' "$file" 2>/dev/null \
+              | sed -E 's/^CREATE[[:space:]]+TABLE[[:space:]]+(IF[[:space:]]+NOT[[:space:]]+EXISTS[[:space:]]+)?(public\.)?//i' || true)
+            for TABLE in $TABLES; do
+              [ -z "$TABLE" ] && continue
+              if ! grep -qiE "ALTER[[:space:]]+TABLE[[:space:]]+(public[.])?${TABLE}[[:space:]]+ENABLE[[:space:]]+ROW[[:space:]]+LEVEL[[:space:]]+SECURITY" "$file"; then
+                echo "❌ Table '$TABLE' created without RLS in: $file"
+                ERRORS=$((ERRORS + 1))
+              fi
+            done
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "❌ All tables MUST have RLS enabled."
+            exit 1
+          fi
+          echo "✅ All new tables have RLS enabled"
