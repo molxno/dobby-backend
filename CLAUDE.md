@@ -120,6 +120,7 @@ ci: set up GitHub Actions for tests
 #### `profiles` (extends auth.users)
 - PK: `id uuid` → `auth.users(id)` ON DELETE CASCADE
 - Columns: name, country, currency, locale, onboarding_completed, dark_mode, debt_strategy, goal_mode, current_fund, timestamps
+- Note: `biweekly_checked_items` was removed — biweekly state is now derived from `transactions.biweekly_key`
 - CHECK: debt_strategy IN ('avalanche', 'snowball'), goal_mode IN ('sequential', 'parallel')
 
 #### `incomes`
@@ -147,14 +148,14 @@ ci: set up GitHub Actions for tests
 #### `transactions`
 - PK: `id text`
 - FK: `user_id uuid` → `profiles(id)` ON DELETE CASCADE
-- Columns: date, amount, type, category, description, payment_method, is_recurring, created_at
+- Columns: date, amount, type, category, description, payment_method, is_recurring, biweekly_key, created_at
 - CHECK: type IN ('income', 'expense', 'debt_payment', 'savings', 'transfer'), payment_method IN ('cash', 'debit', 'credit_card')
 
 ### RLS Policies
 All tables have RLS enabled. Each user can only CRUD their own records:
 - `profiles`: SELECT, INSERT, UPDATE (filter: `auth.uid() = id`)
 - `incomes`, `expenses`, `debts`, `goals`: SELECT, INSERT, UPDATE, DELETE (filter: `auth.uid() = user_id`)
-- `transactions`: SELECT, INSERT, DELETE (filter: `auth.uid() = user_id`)
+- `transactions`: SELECT, INSERT, UPDATE, DELETE (filter: `auth.uid() = user_id`)
 
 ### Triggers
 - `on_auth_user_created` → `handle_new_user()` — Auto-creates profile on signup (SECURITY DEFINER)
@@ -166,6 +167,7 @@ All tables have RLS enabled. Each user can only CRUD their own records:
 ### Indexes
 - `idx_*_user` on user_id of all tables
 - `idx_transactions_date` composite (user_id, date DESC)
+- `idx_transactions_biweekly_key` partial (user_id, biweekly_key) WHERE biweekly_key IS NOT NULL
 
 ## DB ↔ Frontend Mapping
 
