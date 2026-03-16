@@ -117,31 +117,33 @@ insert into public.goals (id, user_id, name, icon, target_amount, current_saved,
 -- =============================================================
 -- TRANSACCIONES — Carlos (últimos 3 meses)
 -- =============================================================
-insert into public.transactions (id, user_id, date, amount, type, category, description, payment_method, is_recurring) values
-  ('tx-c-001', '11111111-1111-1111-1111-111111111111', '2026-03-15', 4500000, 'income', 'salary', 'Salario marzo', 'debit', true),
-  ('tx-c-002', '11111111-1111-1111-1111-111111111111', '2026-03-01', 1500000, 'expense', 'housing', 'Arriendo marzo', 'debit', true),
-  ('tx-c-003', '11111111-1111-1111-1111-111111111111', '2026-03-05', 280000, 'expense', 'utilities', 'Servicios marzo', 'debit', true),
-  ('tx-c-004', '11111111-1111-1111-1111-111111111111', '2026-03-10', 250000, 'debt_payment', 'credit_card', 'Pago Visa marzo', 'debit', true),
-  ('tx-c-005', '11111111-1111-1111-1111-111111111111', '2026-03-10', 520000, 'debt_payment', 'personal_loan', 'Cuota crédito marzo', 'debit', true),
-  ('tx-c-006', '11111111-1111-1111-1111-111111111111', '2026-03-12', 400000, 'savings', 'emergency', 'Ahorro fondo emergencia', 'debit', false),
-  ('tx-c-007', '11111111-1111-1111-1111-111111111111', '2026-03-08', 85000, 'expense', 'food', 'Mercado semana 1', 'cash', false),
-  ('tx-c-008', '11111111-1111-1111-1111-111111111111', '2026-02-15', 4500000, 'income', 'salary', 'Salario febrero', 'debit', true),
-  ('tx-c-009', '11111111-1111-1111-1111-111111111111', '2026-02-01', 1500000, 'expense', 'housing', 'Arriendo febrero', 'debit', true),
-  ('tx-c-010', '11111111-1111-1111-1111-111111111111', '2026-02-14', 120000, 'expense', 'entertainment', 'Cena San Valentín', 'credit_card', false),
-  ('tx-c-011', '11111111-1111-1111-1111-111111111111', '2026-01-15', 4500000, 'income', 'salary', 'Salario enero', 'debit', true),
-  ('tx-c-012', '11111111-1111-1111-1111-111111111111', '2026-01-20', 380000, 'debt_payment', 'purchase_financing', 'Cuota MacBook enero', 'debit', true);
+-- biweekly_key format: "{period}-{index}" where period = quincena number, index = item position
+-- Transactions with biweekly_key represent checked items from the biweekly planner
+insert into public.transactions (id, user_id, date, amount, type, category, description, payment_method, is_recurring, biweekly_key) values
+  ('tx-c-001', '11111111-1111-1111-1111-111111111111', '2026-03-15', 4500000, 'income', 'salary', 'Salario marzo', 'debit', true, null),
+  ('tx-c-002', '11111111-1111-1111-1111-111111111111', '2026-03-01', 1500000, 'expense', 'housing', 'Arriendo marzo', 'debit', true, '1-0'),
+  ('tx-c-003', '11111111-1111-1111-1111-111111111111', '2026-03-05', 280000, 'expense', 'utilities', 'Servicios marzo', 'debit', true, '1-1'),
+  ('tx-c-004', '11111111-1111-1111-1111-111111111111', '2026-03-10', 250000, 'debt_payment', 'credit_card', 'Pago Visa marzo', 'debit', true, '1-2'),
+  ('tx-c-005', '11111111-1111-1111-1111-111111111111', '2026-03-10', 520000, 'debt_payment', 'personal_loan', 'Cuota crédito marzo', 'debit', true, '1-3'),
+  ('tx-c-006', '11111111-1111-1111-1111-111111111111', '2026-03-12', 400000, 'savings', 'emergency', 'Ahorro fondo emergencia', 'debit', false, '1-4'),
+  ('tx-c-007', '11111111-1111-1111-1111-111111111111', '2026-03-08', 85000, 'expense', 'food', 'Mercado semana 1', 'cash', false, null),
+  ('tx-c-008', '11111111-1111-1111-1111-111111111111', '2026-02-15', 4500000, 'income', 'salary', 'Salario febrero', 'debit', true, null),
+  ('tx-c-009', '11111111-1111-1111-1111-111111111111', '2026-02-01', 1500000, 'expense', 'housing', 'Arriendo febrero', 'debit', true, null),
+  ('tx-c-010', '11111111-1111-1111-1111-111111111111', '2026-02-14', 120000, 'expense', 'entertainment', 'Cena San Valentín', 'credit_card', false, null),
+  ('tx-c-011', '11111111-1111-1111-1111-111111111111', '2026-01-15', 4500000, 'income', 'salary', 'Salario enero', 'debit', true, null),
+  ('tx-c-012', '11111111-1111-1111-1111-111111111111', '2026-01-20', 380000, 'debt_payment', 'purchase_financing', 'Cuota MacBook enero', 'debit', true, null);
 
 -- TRANSACCIONES — María (últimos 3 meses)
-insert into public.transactions (id, user_id, date, amount, type, category, description, payment_method, is_recurring) values
-  ('tx-m-001', '22222222-2222-2222-2222-222222222222', '2026-03-28', 3200000, 'income', 'salary', 'Salario marzo', 'debit', true),
-  ('tx-m-002', '22222222-2222-2222-2222-222222222222', '2026-03-01', 1200000, 'expense', 'housing', 'Arriendo marzo', 'debit', true),
-  ('tx-m-003', '22222222-2222-2222-2222-222222222222', '2026-03-05', 320000, 'debt_payment', 'student_loan', 'Cuota ICETEX marzo', 'debit', true),
-  ('tx-m-004', '22222222-2222-2222-2222-222222222222', '2026-03-07', 350000, 'expense', 'food', 'Mercado quincenal 1', 'cash', true),
-  ('tx-m-005', '22222222-2222-2222-2222-222222222222', '2026-03-10', 200000, 'savings', 'education', 'Ahorro maestría', 'debit', false),
-  ('tx-m-006', '22222222-2222-2222-2222-222222222222', '2026-03-05', 800000, 'income', 'freelance', 'Tutorías semana 1', 'cash', false),
-  ('tx-m-007', '22222222-2222-2222-2222-222222222222', '2026-02-28', 3200000, 'income', 'salary', 'Salario febrero', 'debit', true),
-  ('tx-m-008', '22222222-2222-2222-2222-222222222222', '2026-02-01', 1200000, 'expense', 'housing', 'Arriendo febrero', 'debit', true),
-  ('tx-m-009', '22222222-2222-2222-2222-222222222222', '2026-02-15', 150000, 'expense', 'transportation', 'Recarga TransMilenio', 'debit', true),
-  ('tx-m-010', '22222222-2222-2222-2222-222222222222', '2026-01-28', 3200000, 'income', 'salary', 'Salario enero', 'debit', true),
-  ('tx-m-011', '22222222-2222-2222-2222-222222222222', '2026-01-05', 320000, 'debt_payment', 'student_loan', 'Cuota ICETEX enero', 'debit', true),
-  ('tx-m-012', '22222222-2222-2222-2222-222222222222', '2026-01-20', 95000, 'expense', 'entertainment', 'Salida con amigas', 'cash', false);
+insert into public.transactions (id, user_id, date, amount, type, category, description, payment_method, is_recurring, biweekly_key) values
+  ('tx-m-001', '22222222-2222-2222-2222-222222222222', '2026-03-28', 3200000, 'income', 'salary', 'Salario marzo', 'debit', true, null),
+  ('tx-m-002', '22222222-2222-2222-2222-222222222222', '2026-03-01', 1200000, 'expense', 'housing', 'Arriendo marzo', 'debit', true, '1-0'),
+  ('tx-m-003', '22222222-2222-2222-2222-222222222222', '2026-03-05', 320000, 'debt_payment', 'student_loan', 'Cuota ICETEX marzo', 'debit', true, '1-1'),
+  ('tx-m-004', '22222222-2222-2222-2222-222222222222', '2026-03-07', 350000, 'expense', 'food', 'Mercado quincenal 1', 'cash', true, null),
+  ('tx-m-005', '22222222-2222-2222-2222-222222222222', '2026-03-10', 200000, 'savings', 'education', 'Ahorro maestría', 'debit', false, '1-2'),
+  ('tx-m-006', '22222222-2222-2222-2222-222222222222', '2026-03-05', 800000, 'income', 'freelance', 'Tutorías semana 1', 'cash', false, null),
+  ('tx-m-007', '22222222-2222-2222-2222-222222222222', '2026-02-28', 3200000, 'income', 'salary', 'Salario febrero', 'debit', true, null),
+  ('tx-m-008', '22222222-2222-2222-2222-222222222222', '2026-02-01', 1200000, 'expense', 'housing', 'Arriendo febrero', 'debit', true, null),
+  ('tx-m-009', '22222222-2222-2222-2222-222222222222', '2026-02-15', 150000, 'expense', 'transportation', 'Recarga TransMilenio', 'debit', true, null),
+  ('tx-m-010', '22222222-2222-2222-2222-222222222222', '2026-01-28', 3200000, 'income', 'salary', 'Salario enero', 'debit', true, null),
+  ('tx-m-011', '22222222-2222-2222-2222-222222222222', '2026-01-05', 320000, 'debt_payment', 'student_loan', 'Cuota ICETEX enero', 'debit', true, null),
+  ('tx-m-012', '22222222-2222-2222-2222-222222222222', '2026-01-20', 95000, 'expense', 'entertainment', 'Salida con amigas', 'cash', false, null);
