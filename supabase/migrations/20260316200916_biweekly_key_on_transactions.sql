@@ -17,6 +17,7 @@ CREATE INDEX IF NOT EXISTS idx_transactions_biweekly_key
   WHERE biweekly_key IS NOT NULL;
 
 -- 3. Add UPDATE policy on transactions (needed for upserts with onConflict: 'id')
+DROP POLICY IF EXISTS "Users can update own transactions" ON public.transactions;
 CREATE POLICY "Users can update own transactions"
   ON public.transactions FOR UPDATE
   USING (auth.uid() = user_id)

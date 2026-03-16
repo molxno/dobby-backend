@@ -2,7 +2,7 @@
 -- Tests de RLS — Verificar que RLS está habilitado y policies existen
 -- =============================================================
 begin;
-select plan(31);
+select plan(35);
 
 -- =====================
 -- RLS habilitado en todas las tablas
