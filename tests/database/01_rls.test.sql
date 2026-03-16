@@ -2,7 +2,7 @@
 -- Tests de RLS — Verificar que RLS está habilitado y policies existen
 -- =============================================================
 begin;
-select plan(30);
+select plan(31);
 
 -- =====================
 -- RLS habilitado en todas las tablas
@@ -84,13 +84,14 @@ select policies_are(
 );
 
 -- =====================
--- Policies de transactions (SELECT, INSERT, DELETE — no UPDATE)
+-- Policies de transactions (SELECT, INSERT, UPDATE, DELETE — full CRUD for upserts)
 -- =====================
 select policies_are(
   'public', 'transactions',
   array[
     'Users can view own transactions',
     'Users can insert own transactions',
+    'Users can update own transactions',
     'Users can delete own transactions'
   ],
   'transactions tiene las policies correctas'
@@ -125,6 +126,7 @@ select policy_cmd_is('public', 'goals', 'Users can delete own goals', 'delete', 
 
 select policy_cmd_is('public', 'transactions', 'Users can view own transactions', 'select', 'Policy de transactions SELECT');
 select policy_cmd_is('public', 'transactions', 'Users can insert own transactions', 'insert', 'Policy de transactions INSERT');
+select policy_cmd_is('public', 'transactions', 'Users can update own transactions', 'update', 'Policy de transactions UPDATE');
 select policy_cmd_is('public', 'transactions', 'Users can delete own transactions', 'delete', 'Policy de transactions DELETE');
 
 select * from finish();

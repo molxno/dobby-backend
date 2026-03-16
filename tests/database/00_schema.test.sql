@@ -2,7 +2,7 @@
 -- Tests de Schema — Verificar que todas las tablas y columnas existen
 -- =============================================================
 begin;
-select plan(45);
+select plan(46);
 
 -- =====================
 -- Verificar que las tablas existen
@@ -27,7 +27,7 @@ select has_column('public', 'profiles', 'dark_mode', 'profiles tiene columna dar
 select has_column('public', 'profiles', 'debt_strategy', 'profiles tiene columna debt_strategy');
 select has_column('public', 'profiles', 'goal_mode', 'profiles tiene columna goal_mode');
 select has_column('public', 'profiles', 'current_fund', 'profiles tiene columna current_fund');
-select has_column('public', 'profiles', 'biweekly_checked_items', 'profiles tiene columna biweekly_checked_items');
+select hasnt_column('public', 'profiles', 'biweekly_checked_items', 'profiles ya NO tiene columna biweekly_checked_items (migrada a transactions.biweekly_key)');
 
 -- =====================
 -- Columnas de incomes
@@ -76,6 +76,7 @@ select has_column('public', 'transactions', 'date', 'transactions tiene columna 
 select has_column('public', 'transactions', 'amount', 'transactions tiene columna amount');
 select has_column('public', 'transactions', 'type', 'transactions tiene columna type');
 select has_column('public', 'transactions', 'category', 'transactions tiene columna category');
+select has_column('public', 'transactions', 'biweekly_key', 'transactions tiene columna biweekly_key');
 
 select * from finish();
 rollback;
