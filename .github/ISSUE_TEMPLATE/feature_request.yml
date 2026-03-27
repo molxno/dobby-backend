@@ -1,55 +1,55 @@
 name: "Feature Request"
-description: "Proponer una nueva funcionalidad para el backend"
+description: "Propose a new feature for the backend"
 title: "[Feature]: "
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Gracias por proponer una mejora. Describe tu idea con el mayor detalle posible.
+        Thanks for proposing an improvement. Please describe your idea in as much detail as possible.
 
   - type: dropdown
     id: area
     attributes:
-      label: "Área"
-      description: "Selecciona el área de la funcionalidad"
+      label: "Area"
+      description: "Select the area of the feature"
       options:
-        - Nueva tabla
-        - Modificación de schema existente
-        - Nueva RLS policy
-        - Nuevo trigger / function
-        - Nueva Edge Function
-        - Mejora de performance (indexes, queries)
-        - Auth / Seguridad
-        - Otro
+        - New table
+        - Modification to existing schema
+        - New RLS policy
+        - New trigger / function
+        - New Edge Function
+        - Performance improvement (indexes, queries)
+        - Auth / Security
+        - Other
     validations:
       required: true
 
   - type: textarea
     id: description
     attributes:
-      label: "Descripción"
-      description: "Describe la funcionalidad que propones"
+      label: "Description"
+      description: "Describe the feature you are proposing"
       placeholder: |
-        Agregar una tabla `categories` para que los usuarios puedan crear categorías personalizadas de gastos, en vez de usar solo las predefinidas.
+        Add a `categories` table so users can create custom expense categories instead of using only the predefined ones.
     validations:
       required: true
 
   - type: textarea
     id: motivation
     attributes:
-      label: "Motivación"
-      description: "Por qué necesitamos esta funcionalidad? Qué problema resuelve?"
+      label: "Motivation"
+      description: "Why do we need this feature? What problem does it solve?"
       placeholder: |
-        Actualmente las categorías de gastos son fijas en el frontend. Los usuarios han pedido poder crear sus propias categorías para adaptarse a su estilo de vida.
+        Currently, expense categories are hardcoded in the frontend. Users have requested the ability to create their own categories to better fit their lifestyle.
     validations:
       required: true
 
   - type: textarea
     id: proposed_schema
     attributes:
-      label: "Schema propuesto (opcional)"
-      description: "Si tienes una idea del schema SQL, compártela"
+      label: "Proposed schema (optional)"
+      description: "If you have an idea for the SQL schema, share it here"
       render: sql
       placeholder: |
         CREATE TABLE categories (
@@ -66,8 +66,8 @@ body:
   - type: textarea
     id: considerations
     attributes:
-      label: "Consideraciones"
-      description: "Algo que debamos tener en cuenta? (RLS, migraciones, compatibilidad con frontend, etc.)"
+      label: "Considerations"
+      description: "Anything we should keep in mind? (RLS, migrations, frontend compatibility, etc.)"
     validations:
       required: false
 
@@ -76,7 +76,7 @@ body:
     attributes:
       label: "Checklist"
       options:
-        - label: "He revisado que no existe un issue similar abierto"
+        - label: "I have checked that no similar issue is already open"
           required: true
-        - label: "Estoy dispuesto/a a contribuir con un PR para esta funcionalidad"
+        - label: "I am willing to contribute a PR for this feature"
           required: false

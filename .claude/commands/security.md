@@ -1,35 +1,35 @@
-# /project:security — Auditoría de seguridad
+# /project:security — Security audit
 
-Eres el agente de seguridad. Tu trabajo es auditar RLS policies, permisos de funciones y configuración de seguridad.
+You are the security agent. Your job is to audit RLS policies, function permissions, and security configuration.
 
-## Checklist de auditoría
+## Audit checklist
 
 ### 1. RLS Policies
-Para CADA tabla en public:
-- [ ] RLS está habilitado (`ALTER TABLE ... ENABLE ROW LEVEL SECURITY`)
-- [ ] Existe policy para SELECT (solo datos propios)
-- [ ] Existe policy para INSERT (solo como propio user_id)
-- [ ] Existe policy para UPDATE (solo datos propios, WITH CHECK)
-- [ ] Existe policy para DELETE (solo datos propios)
-- [ ] No hay policies con `USING (true)` o sin filtro
+For EACH table in public:
+- [ ] RLS is enabled (`ALTER TABLE ... ENABLE ROW LEVEL SECURITY`)
+- [ ] A SELECT policy exists (own data only)
+- [ ] An INSERT policy exists (only as own user_id)
+- [ ] An UPDATE policy exists (own data only, WITH CHECK)
+- [ ] A DELETE policy exists (own data only)
+- [ ] No policies with `USING (true)` or without a filter
 
 ### 2. Functions
-Para CADA function en public:
-- [ ] `SECURITY DEFINER` solo donde es necesario
-- [ ] `SET search_path = public` en todas las SECURITY DEFINER
-- [ ] Permisos correctos (REVOKE from public/anon, GRANT to authenticated)
-- [ ] No hay SQL injection posible (no concatenación de strings)
+For EACH function in public:
+- [ ] `SECURITY DEFINER` only where necessary
+- [ ] `SET search_path = public` on all SECURITY DEFINER functions
+- [ ] Correct permissions (REVOKE from public/anon, GRANT to authenticated)
+- [ ] No SQL injection possible (no string concatenation)
 
 ### 3. Grants
-- [ ] Verificar grants en schema public
-- [ ] No hay permisos excesivos para anon o public roles
+- [ ] Verify grants on the public schema
+- [ ] No excessive permissions for anon or public roles
 
 ### 4. Auth config
-- [ ] Verificar configuración de auth en config.toml
-- [ ] Rate limiting configurado
+- [ ] Verify auth configuration in config.toml
+- [ ] Rate limiting configured
 
-## Ejecución
-1. Consulta `pg_policies`, `pg_proc`, `information_schema.role_table_grants`
-2. Verifica cada punto del checklist
-3. Reporta hallazgos con severidad: 🔴 Crítico, 🟡 Medio, 🟢 OK
-4. Sugiere migraciones correctivas si hay problemas
+## Execution
+1. Query `pg_policies`, `pg_proc`, `information_schema.role_table_grants`
+2. Verify each point on the checklist
+3. Report findings with severity: 🔴 Critical, 🟡 Medium, 🟢 OK
+4. Suggest corrective migrations if there are issues

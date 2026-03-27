@@ -1,50 +1,50 @@
-## Descripción
+## Description
 
-<!-- Describe qué cambiaste y por qué. Si resuelve un issue, enlázalo: Closes #123 -->
+<!-- Describe what changed and why. Link issues: Closes #123 -->
 
-## Tipo de cambio
+## Type of Change
 
-- [ ] `feat` — Nueva funcionalidad
-- [ ] `fix` — Corrección de bug
-- [ ] `refactor` — Refactorización sin cambio funcional
-- [ ] `perf` — Mejora de rendimiento
-- [ ] `test` — Tests nuevos o actualizados
-- [ ] `docs` — Documentación
-- [ ] `chore` — Mantenimiento
+- [ ] `feat` — New feature
+- [ ] `fix` — Bug fix
+- [ ] `refactor` — Code refactor (no functional change)
+- [ ] `perf` — Performance improvement
+- [ ] `test` — New or updated tests
+- [ ] `docs` — Documentation
+- [ ] `chore` — Maintenance
 
-## Área afectada
+## Affected Area
 
-- [ ] Schema (tablas, columnas)
+- [ ] Schema (tables, columns)
 - [ ] RLS policies
 - [ ] Triggers / Functions
 - [ ] Edge Functions
-- [ ] Migraciones
+- [ ] Migrations
 - [ ] Seed data
 - [ ] Config / CI
 
-## Cambios en la base de datos
+## Database Changes
 
-<!-- Si hay cambios en el schema, lista las migraciones creadas -->
+<!-- List migrations if schema changed -->
 
-| Migración | Descripción |
+| Migration | Description |
 |-----------|-------------|
-| `YYYYMMDD_nombre.sql` | ... |
+| `YYYYMMDD_name.sql` | ... |
 
 ## Checklist
 
-- [ ] Los tests pasan (`npm run test`)
-- [ ] Nuevas tablas tienen RLS habilitado con policies
-- [ ] Nuevas tablas tienen index por `user_id`
-- [ ] CHECK constraints para enums y rangos
-- [ ] Migraciones usan `IF NOT EXISTS` / `IF EXISTS`
-- [ ] Functions SECURITY DEFINER tienen `SET search_path`
-- [ ] Commits siguen Conventional Commits
-- [ ] Documentación actualizada si es necesario
+- [ ] Tests pass (`npm run test`)
+- [ ] New tables have RLS enabled with policies
+- [ ] New tables have index on `user_id`
+- [ ] CHECK constraints for enums and ranges
+- [ ] Migrations use `IF NOT EXISTS` / `IF EXISTS`
+- [ ] SECURITY DEFINER functions have `SET search_path`
+- [ ] Commits follow Conventional Commits
+- [ ] Documentation updated if needed
 
-## Screenshots / Evidencia
+## Test Plan
 
-<!-- Si aplica, agrega capturas de los tests pasando o queries funcionando -->
+<!-- How was this tested? -->
 
-## Notas para el reviewer
+## Notes for Reviewer
 
-<!-- Algo que deba saber el reviewer? Riesgos, decisiones de diseño, etc. -->
+<!-- Risks, design decisions, anything the reviewer should know -->

@@ -1,20 +1,20 @@
-# /project:dev — Levantar Supabase local
+# /project:dev — Start local Supabase
 
-Eres el agente de desarrollo local. Tu trabajo es levantar y verificar el entorno de Supabase local.
+You are the local development agent. Your job is to start and verify the local Supabase environment.
 
-## Pasos
+## Steps
 
-1. Verifica que Docker esté corriendo: `docker info`
-2. Levanta Supabase local: `supabase start`
-3. Muestra el estado: `supabase status`
-4. Presenta al usuario las URLs y keys relevantes:
+1. Verify that Docker is running: `docker info`
+2. Start local Supabase: `supabase start`
+3. Show the status: `supabase status`
+4. Present the user with the relevant URLs and keys:
    - API URL
    - DB URL
    - Studio URL
    - anon key
    - service_role key
-5. Verifica que las migraciones se aplicaron correctamente: `supabase migration list`
-6. Si hay errores, diagnostica y sugiere soluciones
+5. Verify that migrations were applied correctly: `supabase migration list`
+6. If there are errors, diagnose and suggest solutions
 
-## Formato de salida
-Muestra un resumen claro con las URLs y keys, listo para copiar al `.env` del frontend.
+## Output format
+Show a clear summary with the URLs and keys, ready to copy to the frontend `.env`.

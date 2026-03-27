@@ -1,71 +1,71 @@
 name: "Bug Report"
-description: "Reportar un bug en la base de datos, RLS, triggers o Edge Functions"
+description: "Report a bug in the database, RLS, triggers, or Edge Functions"
 title: "[Bug]: "
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Gracias por reportar este bug. Completa la información para que podamos investigar.
+        Thanks for reporting this bug. Please fill in the details so we can investigate.
 
   - type: dropdown
     id: area
     attributes:
-      label: "Área afectada"
-      description: "Selecciona el área donde ocurre el bug"
+      label: "Affected area"
+      description: "Select the area where the bug occurs"
       options:
-        - Schema (tablas, columnas, tipos)
-        - RLS (policies de seguridad)
+        - Schema (tables, columns, types)
+        - RLS (security policies)
         - Triggers / Functions
         - Edge Functions
-        - Auth (autenticación)
-        - Migraciones
+        - Auth (authentication)
+        - Migrations
         - Seed data
-        - Otro
+        - Other
     validations:
       required: true
 
   - type: input
     id: table
     attributes:
-      label: "Tabla/función afectada"
-      description: "Nombre de la tabla, function o trigger involucrado"
-      placeholder: "ej: profiles, delete_user_account(), incomes_updated_at"
+      label: "Affected table/function"
+      description: "Name of the table, function, or trigger involved"
+      placeholder: "e.g.: profiles, delete_user_account(), incomes_updated_at"
     validations:
       required: false
 
   - type: textarea
     id: description
     attributes:
-      label: "Descripción del bug"
-      description: "Describe qué está pasando y qué esperabas que pasara"
+      label: "Bug description"
+      description: "Describe what is happening and what you expected to happen"
       placeholder: |
-        **Qué pasa:** Al intentar insertar un gasto con payment_method='nequi', no hay error pero tampoco se guarda.
-        **Qué espero:** Debería rechazar el valor con un CHECK constraint error.
+        **What happens:** When inserting an expense with payment_method='nequi', there is no error but the row is not saved either.
+        **What I expected:** It should reject the value with a CHECK constraint error.
     validations:
       required: true
 
   - type: textarea
     id: reproduce
     attributes:
-      label: "Pasos para reproducir"
-      description: "Query SQL o pasos para reproducir el bug"
+      label: "Steps to reproduce"
+      description: "SQL query or steps to reproduce the bug"
       placeholder: |
-        1. Levantar Supabase local: `npm run dev`
-        2. Ejecutar en SQL Editor:
+        1. Start local Supabase: `npm run dev`
+        2. Run in SQL Editor:
         ```sql
         INSERT INTO expenses (id, user_id, name, payment_method)
-        VALUES ('test', 'uuid-aqui', 'Test', 'nequi');
+        VALUES ('test', 'uuid-here', 'Test', 'nequi');
         ```
-        3. Ver el resultado
+        3. Observe the result
     validations:
       required: true
 
   - type: textarea
     id: error
     attributes:
-      label: "Error o resultado actual"
-      description: "Copia el error exacto o describe el resultado"
+      label: "Error or actual result"
+      description: "Copy the exact error or describe the result"
       render: shell
     validations:
       required: false
@@ -73,10 +73,10 @@ body:
   - type: dropdown
     id: environment
     attributes:
-      label: "Entorno"
+      label: "Environment"
       options:
         - Local (supabase start)
-        - Producción (Supabase hosted)
-        - Ambos
+        - Production (Supabase hosted)
+        - Both
     validations:
       required: true

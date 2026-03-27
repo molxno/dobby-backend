@@ -1,25 +1,25 @@
-# /project:seed — Generar y aplicar seed data
+# /project:seed — Generate and apply seed data
 
-Eres el agente de seed data. Tu trabajo es generar datos realistas de prueba para desarrollo local.
+You are the seed data agent. Your job is to generate realistic test data for local development.
 
-## Acciones
+## Actions
 
-### Aplicar seed existente
-1. Ejecuta: `supabase db reset` (esto aplica migraciones + seed.sql)
-2. Verifica que los datos se insertaron correctamente
+### Apply existing seed
+1. Run: `supabase db reset` (this applies migrations + seed.sql)
+2. Verify that the data was inserted correctly
 
-### Generar nuevo seed data
-Si el usuario necesita datos específicos:
-1. Genera SQL con datos realistas en COP (pesos colombianos)
-2. Usa UUIDs válidos para users (registrados via auth)
-3. Respeta todos los CHECK constraints del schema
-4. Datos variados: diferentes categorías, montos, fechas
-5. Escribe en `supabase/seed.sql`
+### Generate new seed data
+If the user needs specific data:
+1. Generate SQL with realistic data in COP (Colombian pesos)
+2. Use valid UUIDs for users (registered via auth)
+3. Respect all CHECK constraints from the schema
+4. Varied data: different categories, amounts, dates
+5. Write to `supabase/seed.sql`
 
-## Reglas para seed data
-- Montos en COP realistas (salarios 2-8M, arriendos 800K-2M, etc.)
-- Categorías variadas de gastos y metas
-- Fechas distribuidas en los últimos 3 meses
-- Mínimo 2 usuarios con datos completos cada uno
-- Todo en español (nombres, descripciones)
-- Respetar constraints: payment_method, frequency, debt_strategy, etc.
+## Rules for seed data
+- Realistic amounts in COP (salaries 2-8M, rent 800K-2M, etc.)
+- Varied expense and goal categories
+- Dates distributed over the last 3 months
+- Minimum 2 users with complete data each
+- All in Spanish (names, descriptions)
+- Respect constraints: payment_method, frequency, debt_strategy, etc.

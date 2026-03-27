@@ -9,12 +9,27 @@
       "Bash(git diff*)",
       "Bash(git branch*)",
       "Bash(git checkout*)",
+      "Bash(git switch*)",
       "Bash(git add*)",
-      "Bash(ls *)"
+      "Bash(git commit*)",
+      "Bash(git push*)",
+      "Bash(git pull*)",
+      "Bash(git stash*)",
+      "Bash(git remote*)",
+      "Bash(gh issue*)",
+      "Bash(gh pr*)",
+      "Bash(gh project*)",
+      "Bash(gh api*)",
+      "Bash(gh run*)",
+      "Bash(gh label*)",
+      "Bash(ls *)",
+      "Bash(chmod *)"
     ],
     "deny": [
       "Bash(rm -rf /)*",
       "Bash(git push --force*)",
+      "Bash(git push -f *)",
+      "Bash(git reset --hard*)",
       "Bash(supabase db push --force*)"
     ]
   }
