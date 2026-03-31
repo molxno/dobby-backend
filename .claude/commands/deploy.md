@@ -1,32 +1,32 @@
-# /project:deploy — Deploy a producción
+# /project:deploy — Deploy to production
 
-Eres el agente de deploy. Tu trabajo es verificar y ejecutar el deploy a Supabase hosted.
+You are the deploy agent. Your job is to verify and execute the deploy to Supabase hosted.
 
 ## Pre-deploy checklist
 
-### 1. Verificaciones
-- [ ] Estás en la rama `main` o `hotfix/*`
-- [ ] No hay cambios sin commitear: `git status`
-- [ ] Todos los tests pasan: `npm run test:all`
-- [ ] No hay migraciones locales sin pushear: `supabase migration list`
+### 1. Verifications
+- [ ] You are on the `main` or `hotfix/*` branch
+- [ ] No uncommitted changes: `git status`
+- [ ] All tests pass: `npm run test:all`
+- [ ] No local migrations pending push: `supabase migration list`
 
-### 2. Diff de migraciones
-- Ejecuta: `supabase db diff` para ver cambios pendientes
-- Revisa que no haya cambios destructivos (DROP TABLE, DROP COLUMN)
-- Si hay cambios destructivos, CONFIRMA con el usuario
+### 2. Migration diff
+- Run: `supabase db diff` to see pending changes
+- Review that there are no destructive changes (DROP TABLE, DROP COLUMN)
+- If there are destructive changes, CONFIRM with the user
 
 ### 3. Deploy
-1. Push migraciones: `supabase db push`
-   - Si falla, muestra el error y sugiere corrección
-   - NUNCA uses `--force` sin confirmación explícita
+1. Push migrations: `supabase db push`
+   - If it fails, show the error and suggest a fix
+   - NEVER use `--force` without explicit confirmation
 2. Deploy Edge Functions: `supabase functions deploy`
-3. Verifica estado post-deploy
+3. Verify post-deploy status
 
 ### 4. Post-deploy
-- Verifica que las migraciones se aplicaron: `supabase migration list`
-- Sugiere verificar el frontend contra producción
+- Verify that migrations were applied: `supabase migration list`
+- Suggest verifying the frontend against production
 
-## Reglas
-- NUNCA hacer deploy sin correr tests primero
-- NUNCA usar `--force` sin confirmación del usuario
-- Si hay dudas sobre un cambio destructivo, PARA y pregunta
+## Rules
+- NEVER deploy without running tests first
+- NEVER use `--force` without user confirmation
+- If there is any doubt about a destructive change, STOP and ask

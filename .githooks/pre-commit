@@ -1,67 +1,67 @@
 #!/bin/bash
 # =============================================================
-# Pre-commit hook para dobby-backend
+# Pre-commit hook for dobby-backend
 # =============================================================
-# 1. Lint básico de archivos SQL modificados
-# 2. Verificar nombres descriptivos en migraciones nuevas
-# 3. Si hay Edge Functions modificadas, correr sus tests
+# 1. Basic lint for modified SQL files
+# 2. Verify descriptive names on new migrations
+# 3. If Edge Functions were modified, run their tests
 # =============================================================
 
-echo "🔍 Ejecutando pre-commit checks..."
+echo "Running pre-commit checks..."
 
-# Obtener archivos staged
+# Get staged files
 staged_files=$(git diff --cached --name-only --diff-filter=ACM)
 
-# --- 1. Lint básico de SQL ---
+# --- 1. Basic SQL lint ---
 sql_files=$(echo "$staged_files" | grep '\.sql$' || true)
 if [ -n "$sql_files" ]; then
-  echo "📄 Verificando archivos SQL..."
+  echo "Checking SQL files..."
   for file in $sql_files; do
-    # Verificar que no haya DROP TABLE/COLUMN sin comentario explicativo
+    # Check for DROP TABLE/COLUMN without an explanatory comment
     if grep -qiE "DROP (TABLE|COLUMN)" "$file"; then
-      echo "⚠️  $file contiene DROP TABLE/COLUMN — asegúrate de que es intencional"
+      echo "WARNING: $file contains DROP TABLE/COLUMN — make sure this is intentional"
     fi
-    # Verificar que nuevas tablas tengan RLS
+    # Check that new tables have RLS enabled
     if grep -qiE "CREATE TABLE" "$file" && ! grep -qiE "ENABLE ROW LEVEL SECURITY" "$file"; then
-      echo "❌ $file crea tabla(s) sin habilitar RLS"
-      echo "   Agrega: ALTER TABLE <tabla> ENABLE ROW LEVEL SECURITY;"
+      echo "ERROR: $file creates table(s) without enabling RLS"
+      echo "   Add: ALTER TABLE <table> ENABLE ROW LEVEL SECURITY;"
       exit 1
     fi
   done
-  echo "✅ SQL checks pasados"
+  echo "SQL checks passed"
 fi
 
-# --- 2. Verificar nombres de migraciones ---
+# --- 2. Verify migration names ---
 migration_files=$(echo "$staged_files" | grep 'supabase/migrations/' || true)
 if [ -n "$migration_files" ]; then
-  echo "📄 Verificando migraciones..."
+  echo "Checking migrations..."
   for file in $migration_files; do
     basename=$(basename "$file")
-    # Verificar que tenga nombre descriptivo (no solo timestamp)
+    # Verify it has a descriptive name (not just a timestamp)
     name_part=$(echo "$basename" | sed 's/^[0-9]*_//' | sed 's/\.sql$//')
     if [ -z "$name_part" ] || [ "$name_part" = "migration" ]; then
-      echo "❌ Migración sin nombre descriptivo: $basename"
-      echo "   Usa: supabase migration new <nombre_descriptivo>"
+      echo "ERROR: Migration without a descriptive name: $basename"
+      echo "   Use: supabase migration new <descriptive_name>"
       exit 1
     fi
   done
-  echo "✅ Migraciones con nombres descriptivos"
+  echo "Migrations have descriptive names"
 fi
 
-# --- 3. Tests de Edge Functions modificadas ---
+# --- 3. Edge Functions tests ---
 function_files=$(echo "$staged_files" | grep 'supabase/functions/' || true)
 if [ -n "$function_files" ]; then
-  echo "🧪 Edge Functions modificadas, ejecutando tests..."
+  echo "Edge Functions modified, running tests..."
   if command -v deno &> /dev/null && [ -d "tests/functions" ]; then
     deno test tests/functions/ --allow-all
     if [ $? -ne 0 ]; then
-      echo "❌ Tests de Edge Functions fallaron"
+      echo "ERROR: Edge Functions tests failed"
       exit 1
     fi
-    echo "✅ Tests de Edge Functions pasados"
+    echo "Edge Functions tests passed"
   else
-    echo "⚠️  Deno no disponible o no hay tests — saltando"
+    echo "WARNING: Deno not available or no tests found — skipping"
   fi
 fi
 
-echo "✅ Pre-commit checks completados"
+echo "Pre-commit checks completed"

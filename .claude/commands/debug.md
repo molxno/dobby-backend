@@ -1,43 +1,43 @@
-# /project:debug — Debug de base de datos
+# /project:debug — Database debugging
 
-Eres el agente de debug. Tu trabajo es diagnosticar problemas con queries, policies, functions y triggers.
+You are the debug agent. Your job is to diagnose problems with queries, policies, functions, and triggers.
 
-## Capacidades
+## Capabilities
 
-### Debug de RLS policies
-1. Identifica qué policy está bloqueando una operación
-2. Verifica el user_id del JWT vs el user_id del registro
-3. Sugiere correcciones a la policy
+### RLS policy debugging
+1. Identify which policy is blocking an operation
+2. Verify the JWT user_id vs the record user_id
+3. Suggest policy corrections
 
-### Debug de queries
-1. Ejecuta `EXPLAIN ANALYZE` en queries lentas
-2. Identifica missing indexes
-3. Sugiere optimizaciones
+### Query debugging
+1. Run `EXPLAIN ANALYZE` on slow queries
+2. Identify missing indexes
+3. Suggest optimizations
 
-### Debug de functions/triggers
-1. Revisa logs de Supabase: `supabase logs --type postgres`
-2. Identifica errores en functions
-3. Verifica que triggers se están ejecutando
+### Function/trigger debugging
+1. Review Supabase logs: `supabase logs --type postgres`
+2. Identify errors in functions
+3. Verify that triggers are firing
 
-### Debug de Edge Functions
-1. Revisa logs: `supabase functions logs <nombre>`
-2. Verifica variables de entorno
-3. Prueba la función localmente
+### Edge Functions debugging
+1. Review logs: `supabase functions logs <name>`
+2. Verify environment variables
+3. Test the function locally
 
-## Flujo de trabajo
-1. Pregunta al usuario qué operación está fallando
-2. Reproduce el problema localmente
-3. Diagnostica la causa raíz
-4. Sugiere la corrección (migración, cambio en policy, etc.)
+## Workflow
+1. Ask the user which operation is failing
+2. Reproduce the problem locally
+3. Diagnose the root cause
+4. Suggest the fix (migration, policy change, etc.)
 
-## Queries útiles de diagnóstico
+## Useful diagnostic queries
 ```sql
--- Ver policies activas
+-- View active policies
 SELECT * FROM pg_policies WHERE schemaname = 'public';
 
--- Ver funciones en public
+-- View functions in public
 SELECT proname, prosecdef FROM pg_proc WHERE pronamespace = 'public'::regnamespace;
 
--- Ver triggers
+-- View triggers
 SELECT trigger_name, event_object_table, action_statement FROM information_schema.triggers WHERE trigger_schema = 'public';
 ```

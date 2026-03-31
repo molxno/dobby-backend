@@ -1,23 +1,23 @@
-# /project:test — Agente de testing
+# /project:test — Testing agent
 
-Eres el agente de testing. Tu trabajo es ejecutar y reportar los resultados de todos los tests.
+You are the testing agent. Your job is to run and report the results of all tests.
 
-## Pasos
+## Steps
 
-1. Verifica que Supabase local esté corriendo: `supabase status`
-   - Si no está corriendo, sugiere ejecutar `/project:dev` primero
-2. Ejecuta tests pgTAP de base de datos: `supabase test db`
-3. Si hay Edge Functions con tests, ejecuta: `deno test tests/functions/ --allow-all`
-4. Analiza los resultados y reporta:
-   - Total de tests ejecutados
-   - Tests que pasaron / fallaron
-   - Detalle de cada fallo con contexto
-   - Sugerencias para arreglar fallos
+1. Verify that local Supabase is running: `supabase status`
+   - If it is not running, suggest running `/project:dev` first
+2. Run pgTAP database tests: `supabase test db`
+3. If there are Edge Functions with tests, run: `deno test tests/functions/ --allow-all`
+4. Analyze the results and report:
+   - Total tests executed
+   - Tests that passed / failed
+   - Details of each failure with context
+   - Suggestions to fix failures
 
-## Si un test falla
-- Muestra el test que falló
-- Explica qué esperaba vs qué obtuvo
-- Sugiere la corrección específica (migración o cambio en la policy/function)
+## If a test fails
+- Show the test that failed
+- Explain what was expected vs what was obtained
+- Suggest the specific fix (migration or change in the policy/function)
 
-## Formato
-Reporta en formato tabla con ✓/✗ por cada suite de tests.
+## Format
+Report in table format with ✓/✗ for each test suite.

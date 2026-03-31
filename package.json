@@ -2,7 +2,7 @@
   "name": "dobby-backend",
   "version": "0.1.0",
   "private": true,
-  "description": "Backend Supabase para Tutor Financiero Personal (dobby-frontend)",
+  "description": "Supabase backend for Personal Finance Tutor (dobby-frontend)",
   "scripts": {
     "dev": "supabase start",
     "stop": "supabase stop",

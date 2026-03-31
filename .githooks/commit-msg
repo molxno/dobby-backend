@@ -1,40 +1,40 @@
 #!/bin/bash
 # =============================================================
-# Validación de Conventional Commits para dobby-backend
+# Conventional Commits validation for dobby-backend
 # =============================================================
-# Tipos: feat, fix, refactor, perf, docs, test, chore, ci
+# Types: feat, fix, refactor, perf, docs, test, chore, ci
 # Scopes: schema, rls, migration, function, trigger, seed, auth, deps, ci
 # =============================================================
 
 commit_msg_file="$1"
 commit_msg=$(cat "$commit_msg_file")
 
-# Regex para Conventional Commits
+# Regex for Conventional Commits
 pattern="^(feat|fix|refactor|perf|docs|test|chore|ci)(\((schema|rls|migration|function|trigger|seed|auth|deps|ci)\))?: .{1,100}$"
 
-# Permitir merge commits
+# Allow merge commits
 if echo "$commit_msg" | grep -qE "^Merge "; then
   exit 0
 fi
 
-# Validar primera línea
+# Validate first line
 first_line=$(echo "$commit_msg" | head -n 1)
 
 if ! echo "$first_line" | grep -qE "$pattern"; then
   echo ""
-  echo "❌ Commit message inválido."
+  echo "ERROR: Invalid commit message."
   echo ""
-  echo "Formato esperado: <type>(<scope>): <descripción>"
+  echo "Expected format: <type>(<scope>): <description>"
   echo ""
-  echo "  Tipos:  feat, fix, refactor, perf, docs, test, chore, ci"
+  echo "  Types:  feat, fix, refactor, perf, docs, test, chore, ci"
   echo "  Scopes: schema, rls, migration, function, trigger, seed, auth, deps, ci"
   echo ""
-  echo "  Ejemplos:"
-  echo "    feat(schema): agregar tabla de categorías personalizadas"
-  echo "    fix(rls): corregir policy de delete en transactions"
-  echo "    test(function): agregar tests para delete_user_account"
+  echo "  Examples:"
+  echo "    feat(schema): add custom categories table"
+  echo "    fix(rls): fix delete policy on transactions"
+  echo "    test(function): add tests for delete_user_account"
   echo ""
-  echo "  Tu mensaje: $first_line"
+  echo "  Your message: $first_line"
   echo ""
   exit 1
 fi

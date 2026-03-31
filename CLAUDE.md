@@ -207,6 +207,97 @@ Configured in `.githooks/` (activate with `git config core.hooksPath .githooks`)
 - **pre-commit** — SQL lint, verify migration names, Edge Functions tests
 - **pre-push** — Blocks direct push to main
 
+## Automated Workflow Protocol
+
+**CRITICAL: This protocol is MANDATORY for ANY code change. Follow it automatically without asking the user.**
+
+When the user requests ANY change (feature, fix, refactor, etc.), execute this full workflow end-to-end:
+
+### 1. Create GitHub Issue (if none exists)
+- Use `gh issue create` on `molxno/dobby-backend` with appropriate labels
+- Title follows the change description; body includes scope, acceptance criteria
+- If a GitHub Project board exists, add the issue to it via `gh project item-add`
+
+### 2. Create Branch from `dev`
+```bash
+git checkout dev && git pull origin dev
+git checkout -b <type>/<descriptive-name>
+```
+- Branch type matches commit type: `feat/`, `fix/`, `refactor/`, `perf/`, `docs/`, `test/`, `chore/`, `ci/`
+- Exception: `hotfix/` branches from `main` for production emergencies
+
+### 3. Implement the Change
+- Make the code changes as requested
+- Follow all project conventions (snake_case, RLS, CHECK constraints, etc.)
+- Write/update tests for any schema or function change
+
+### 4. Validate
+```bash
+npm run test          # pgTAP tests must pass
+npm run test:all      # All tests if Edge Functions are affected
+```
+- Fix any test failures before proceeding
+- Pre-commit hook will also run on commit (SQL lint, migration names)
+
+### 5. Commit and Push
+```bash
+git add <specific-files>
+git commit -m "<type>(<scope>): <description>"
+git push -u origin <branch-name>
+```
+- Conventional Commits format enforced by hook
+- English only in commit messages
+- If pre-commit hook fails, fix the issue and retry
+
+### 6. Create Pull Request to `dev`
+```bash
+gh pr create --base dev --title "<type>(<scope>): <description>" --body "..."
+```
+- PR body must include: Summary, Changes, Test plan
+- Link the GitHub issue: `Closes #<issue-number>`
+- If a GitHub Project board exists, the PR is auto-linked via the issue
+
+### Exceptions
+- **Hotfixes**: Branch from `main`, PR to `main` AND `dev`
+- **Docs-only changes**: Can skip test step if no code is affected
+- **If user explicitly says "just edit, don't commit"**: Stop after step 3
+
+### GitHub Project Integration
+- Repository: `molxno/dobby-backend`
+- When creating issues, check for an existing GitHub Project and add items to it
+- Use `gh issue list` to check for duplicate issues before creating new ones
+
+## MCP Usage — Standard Rule
+
+**CRITICAL: Always prefer MCP tools over CLI alternatives when available.**
+
+### GitHub MCP (`mcp__github__*`)
+Use GitHub MCP tools for ALL GitHub interactions instead of `gh` CLI:
+- **Issues**: `mcp__github__create_issue`, `mcp__github__get_issue`, `mcp__github__list_issues`, `mcp__github__update_issue`, `mcp__github__add_issue_comment`
+- **Pull Requests**: `mcp__github__create_pull_request`, `mcp__github__get_pull_request`, `mcp__github__list_pull_requests`, `mcp__github__get_pull_request_comments`, `mcp__github__get_pull_request_reviews`, `mcp__github__create_pull_request_review`, `mcp__github__merge_pull_request`, `mcp__github__get_pull_request_files`, `mcp__github__get_pull_request_status`
+- **Code**: `mcp__github__search_code`, `mcp__github__get_file_contents`, `mcp__github__create_or_update_file`, `mcp__github__push_files`
+- **Branches**: `mcp__github__create_branch`, `mcp__github__update_pull_request_branch`
+- **Commits**: `mcp__github__list_commits`
+- **Search**: `mcp__github__search_repositories`, `mcp__github__search_issues`, `mcp__github__search_users`
+
+Only fall back to `gh` CLI if the required operation has no MCP equivalent.
+
+### Context7 MCP
+Use Context7 MCP to look up up-to-date documentation for any library or framework before implementing:
+- Resolve library IDs with `mcp__context7__resolve-library-id`
+- Fetch current docs with `mcp__context7__get-library-docs`
+- Use this for: Supabase, PostgreSQL, Deno, pgTAP, and any dependency you're not 100% sure about
+
+## Claude Agent Usage — Token Optimization
+
+**Prefer direct tools over spawning agents for file editing tasks.**
+
+- Use `Read`, `Edit`, `Write`, `Grep`, `Glob` directly for reading and modifying files — these are fast, cheap, and exact.
+- Only spawn an `Agent` when the task genuinely requires autonomous multi-step exploration across many unknown files, or when you need to protect the main context window from huge result sets.
+- **Never spawn parallel agents to edit multiple files** — instead, read and edit them sequentially with direct tools. Parallel agents each carry full context overhead and burn tokens fast.
+- Reserve agents for: broad codebase exploration, complex research questions, and tasks where you are not confident which files to read first.
+- For simple "update all files to use X" tasks: Grep for the pattern, then Read + Edit each file directly.
+
 ## Supabase Gotchas
 
 1. **RLS and service_role** — The `service_role` key bypasses RLS. Only use in server-side Edge Functions, NEVER expose to the frontend.

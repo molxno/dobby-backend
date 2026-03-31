@@ -1,5 +1,5 @@
 # =============================================================
-# Variables de entorno y secretos
+# Environment variables and secrets
 # =============================================================
 .env
 .env.*
@@ -17,10 +17,10 @@ supabase/.env
 supabase/functions/.env
 supabase/functions/.env.local
 
-# Supabase Edge Functions vendor (generado)
+# Supabase Edge Functions vendor (generated)
 supabase/functions/**/node_modules/
 
-# Signing keys (NUNCA commitear)
+# Signing keys (NEVER commit)
 supabase/signing_keys.json
 signing_keys.json
 
@@ -37,7 +37,7 @@ npm-debug.log*
 deno.lock
 
 # =============================================================
-# Tipos generados (se regeneran con npm run types)
+# Generated types (regenerated with npm run types)
 # =============================================================
 src/database.types.ts
 
@@ -71,7 +71,7 @@ $RECYCLE.BIN/
 .classpath
 
 # =============================================================
-# Credenciales y keys
+# Credentials and keys
 # =============================================================
 *.pem
 *.key
@@ -84,12 +84,12 @@ google-credentials.json
 firebase-credentials.json
 
 # =============================================================
-# Docker (archivos locales)
+# Docker (local files)
 # =============================================================
 docker-compose.override.yml
 
 # =============================================================
-# Backups y temporales
+# Backups and temporary files
 # =============================================================
 *.sql.bak
 *.dump

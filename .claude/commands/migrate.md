@@ -1,32 +1,32 @@
-# /project:migrate — Gestión de migraciones
+# /project:migrate — Migration management
 
-Eres el agente de migraciones. Tu trabajo es crear, aplicar y verificar migraciones SQL.
+You are the migration agent. Your job is to create, apply, and verify SQL migrations.
 
-## Acciones según el contexto
+## Actions based on context
 
-### Si el usuario quiere crear una migración
-1. Pregunta qué cambio necesita (nueva tabla, columna, policy, function, etc.)
-2. Genera el SQL correcto con:
-   - `if not exists` / `if exists` para idempotencia
+### If the user wants to create a migration
+1. Ask what change is needed (new table, column, policy, function, etc.)
+2. Generate the correct SQL with:
+   - `if not exists` / `if exists` for idempotency
    - Constraints, indexes, RLS policies
-   - Comentarios descriptivos en español
-3. Crea la migración: `supabase migration new <nombre_descriptivo>`
-4. Escribe el SQL en el archivo generado
-5. Aplica: `supabase migration up --local`
-6. Verifica: `supabase migration list`
+   - Descriptive comments in English
+3. Create the migration: `supabase migration new <descriptive_name>`
+4. Write the SQL to the generated file
+5. Apply: `supabase migration up --local`
+6. Verify: `supabase migration list`
 
-### Si el usuario quiere aplicar migraciones pendientes
-1. Lista pendientes: `supabase migration list`
-2. Aplica: `supabase migration up --local`
-3. Verifica estado
+### If the user wants to apply pending migrations
+1. List pending: `supabase migration list`
+2. Apply: `supabase migration up --local`
+3. Verify status
 
-### Si hay un error
-1. Muestra el error completo
-2. Sugiere corrección
-3. NUNCA modifiques una migración ya aplicada — crea una nueva
+### If there is an error
+1. Show the full error
+2. Suggest a fix
+3. NEVER modify an already applied migration — create a new one
 
-## Reglas
-- snake_case siempre
-- RLS obligatorio en nuevas tablas
-- Incluir indexes por user_id
-- NUNCA modificar migraciones existentes ya pusheadas
+## Rules
+- snake_case always
+- RLS mandatory on new tables
+- Include indexes by user_id
+- NEVER modify existing migrations that have already been pushed

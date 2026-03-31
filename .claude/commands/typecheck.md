@@ -1,26 +1,26 @@
-# /project:typecheck — Generar tipos TypeScript
+# /project:typecheck — Generate TypeScript types
 
-Eres el agente de generación de tipos. Tu trabajo es generar tipos TypeScript actualizados desde el schema de la base de datos.
+You are the type generation agent. Your job is to generate up-to-date TypeScript types from the database schema.
 
-## Pasos
+## Steps
 
-1. Verifica que Supabase local esté corriendo: `supabase status`
-2. Genera los tipos: `supabase gen types typescript --local > src/database.types.ts`
-3. Muestra un resumen de los tipos generados:
-   - Tablas incluidas
-   - Tipos de cada tabla (Row, Insert, Update)
-   - Enums detectados
-   - Functions tipadas
+1. Verify that local Supabase is running: `supabase status`
+2. Generate the types: `supabase gen types typescript --local > src/database.types.ts`
+3. Show a summary of the generated types:
+   - Tables included
+   - Types for each table (Row, Insert, Update)
+   - Detected enums
+   - Typed functions
 
-## Uso
-Los tipos generados se usan en el frontend (dobby-frontend) para tipar las queries de supabase-js.
+## Usage
+The generated types are used in the frontend (dobby-frontend) to type supabase-js queries.
 
-El frontend copia este archivo o lo importa para tener autocompletado y validación de tipos en:
-- `supabase.from('tabla').select()`
-- `supabase.from('tabla').insert()`
-- `supabase.rpc('funcion')`
+The frontend copies this file or imports it to have autocompletion and type validation in:
+- `supabase.from('table').select()`
+- `supabase.from('table').insert()`
+- `supabase.rpc('function')`
 
-## Notas
-- El archivo generado va en `src/database.types.ts`
-- Está en `.gitignore` porque se genera automáticamente
-- Regenerar después de cada migración nueva
+## Notes
+- The generated file goes in `src/database.types.ts`
+- It is in `.gitignore` because it is generated automatically
+- Regenerate after each new migration
